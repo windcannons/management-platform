@@ -375,7 +375,7 @@ function changeScreen() {
   .RiMain {
     width: 100%;
     flex: 1;
-    background-color: #d2d2db;
+    background-color: #fff;
   }
 }
 </style>

@@ -42,14 +42,21 @@
                 </div>
                 <ul class="riul">
                     <li class="rili">
-                        <div>id</div>
+                        <div>1</div>
                         <div><img src="../../public/Grade/applogo.jpg" alt=""></div>
                         <div>老王</div>
                         <div>
                             <el-button type="primary">已启动</el-button>
                         </div>
                     </li>
-                    <li class="rili"></li>
+                    <li class="rili">
+                        <div>2</div>
+                        <div><img src="../../public/Grade/applogo.jpg" alt=""></div>
+                        <div>老李</div>
+                        <div>
+                            <el-button type="primary">已启动</el-button>
+                        </div>
+                    </li>
                     <li class="rili"></li>
                     <li class="rili"></li>
                     <li class="rili"></li>
@@ -409,7 +416,7 @@ const tableData = [
           width: 100%;
           height: 35px;
           margin-top: 10px;
-          background-color: #cdd6e5;
+          //background-color: #cdd6e5;
           display: flex;
           justify-content: space-around;
           align-items: center;
