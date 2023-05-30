@@ -5,7 +5,7 @@ import axios from 'axios';
 
 // 通过axios创建实例
 let requests =axios.create({
-  baseURL:'http://localhost:3000',
+  baseURL:'http://8.130.28.129:9090',
   timeout: 10000,
 })
 
