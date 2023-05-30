@@ -3,10 +3,12 @@
   <h1>首页</h1>
 </template>
 
-<script>
-export default {
-    name: "HomeView"
-}
+<script setup>
+import {getType} from '@/axios/api'
+import {onMounted} from "vue";
+onMounted(function(){
+    getType({}).then
+})
 </script>
 
 <style
