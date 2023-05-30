@@ -1,5 +1,10 @@
 <script
     setup>
+//echarts
+
+import * as echarts from "echarts";
+provide("echarts", echarts);
+
 import {
     RouterLink,
     RouterView
@@ -8,7 +13,8 @@ import {
 
 import {
     ref,
-    reactive
+    reactive,
+    provide
 } from 'vue'
 
 // 引入全屏组件
@@ -369,7 +375,7 @@ function changeScreen() {
   .RiMain {
     width: 100%;
     flex: 1;
-    background-color: #cfeefc;
+    background-color: #d2d2db;
   }
 }
 </style>
