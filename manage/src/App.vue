@@ -1,5 +1,10 @@
 <script
     setup>
+//echarts
+
+import * as echarts from "echarts";
+provide("echarts", echarts);
+
 import {
     RouterLink,
     RouterView
@@ -12,7 +17,12 @@ import {
 import {
     reactive,
     ref,
+<<<<<<< HEAD
     onMounted
+=======
+    reactive,
+    provide
+>>>>>>> xwh
 } from 'vue'
 
 // 引入全屏组件
@@ -536,9 +546,13 @@ function quitLogin() {
   .RiMain {
     width: 100%;
     flex: 1;
+<<<<<<< HEAD
     background-color: #fff;
     border-radius: 15px;
     transition: .4s;
+=======
+    background-color: #d2d2db;
+>>>>>>> xwh
   }
 }
 </style>
