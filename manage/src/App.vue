@@ -5,43 +5,58 @@ import {
     RouterView
 } from 'vue-router'
 // 引入element 相关组件
+import {
+    ArrowDown
+} from '@element-plus/icons-vue'
 
 import {
+    reactive,
     ref,
-    reactive
+    onMounted
 } from 'vue'
 
 // 引入全屏组件
-import screenfull from "screenfull"
+import screenfull
+    from "screenfull"
+import router
+    from "@/router";
+
+// 页面名称
+let SystemName = ["教学管理系统", "Instructional Management System"]
 
 // 左侧导航栏内容
 let nav = [
     {
         name: "首页",
+        enName: "Home",
         img: "../public/APP/home1.png",
         isimg: "../public/APP/home.png",
         to: "/"
     },
     {
         name: "通知管理",
+        enName: "Notice",
         img: "../public/APP/info1.png",
         isimg: "../public/APP/info.png",
         to: "/InformView"
     },
     {
         name: "用户管理",
+        enName: "User",
         img: "../public/APP/user1.png",
         isimg: "../public/APP/user.png",
         to: "/UserView"
     },
     {
         name: "课程管理",
+        enName: "Course",
         img: "../public/APP/class1.png",
         isimg: "../public/APP/class.png",
         to: "/CourseView"
     },
     {
         name: "成绩管理",
+        enName: "Grades",
         img: "../public/APP/grade1.png",
         isimg: "../public/APP/grade.png",
         to: "/GradeView"
@@ -53,11 +68,44 @@ function changeNav(index) {
     checkNavNun.value = index
 }
 
+onMounted(() => {
+    let path = location.pathname
+    if (path === '') {
+        checkNavNun.value = 0
+    }
+    if (path === '/InformView') {
+        checkNavNun.value = 1
+    }
+    if (path === '/UserView') {
+        checkNavNun.value = 2
+    }
+    if (path === '/CourseView') {
+        checkNavNun.value = 3
+    }
+    if (path === '/GradeView') {
+        checkNavNun.value = 4
+    }
+})
+
 // 设置导航栏的移动
 let showNav = ref(true)
 
 function setNav() {
     showNav.value = !showNav.value
+}
+
+// 头部文字
+let title = reactive(['教师端', 'Teacher'])
+
+
+// 设置语言的切换
+let NowLang = ref(true)
+let upLang = ref("中文")
+let chengLang = ref("英文")
+
+function ChangeLang(lang) {
+    NowLang.value = lang === "中文";
+    [upLang.value, chengLang.value] = [chengLang.value, upLang.value]
 }
 
 // 设置全屏与否
@@ -69,6 +117,15 @@ function changeScreen() {
     screenfull.toggle()
 }
 
+// 用户信息
+function userinfo() {
+    router.replace({path: '/UserInfoView'})
+}
+
+// 退出登录
+function quitLogin() {
+    router.replace({path: '/LoginView'})
+}
 </script>
 
 <template>
@@ -81,7 +138,13 @@ function changeScreen() {
                     <img
                             src="../public/APP/logo.png"
                             alt="">
-                    <span>教学管理系统</span>
+                    <span v-show="NowLang">
+                        {{ SystemName[0] }}
+                    </span>
+                    <span v-show="!NowLang"
+                          class="enSystem">
+                        {{ SystemName[1] }}
+                    </span>
                 </div>
                 <ul>
                     <template
@@ -99,11 +162,16 @@ function changeScreen() {
                                         :src="item.isimg"
                                         v-show="checkNavNun=== index"
                                         alt="">
-                                <span>
-                            {{
+                                <span v-show="NowLang">
+                                    {{
                                     item.name
                                     }}
-                        </span>
+                                </span>
+                                <span v-show="!NowLang">
+                                    {{
+                                    item.enName
+                                    }}
+                                </span>
                             </li>
                         </RouterLink>
                     </template>
@@ -123,23 +191,42 @@ function changeScreen() {
                             alt="">
                 </div>
                 <div class="title">
-                    教室端
+                    <span v-show="NowLang">{{ title[0] }}</span>
+                    <span v-show="!NowLang">{{ title[1] }}</span>
                 </div>
                 <div class="riinfo">
                     <!-- 设置语言-->
                     <div class="lang">
-                        <img
+                        <img v-show="NowLang"
                                 src="https://www.gov.cn/images/trs_m_gq.png"
                                 alt="">
+                        <img v-show="!NowLang"
+                                src="https://img1.baidu.com/it/u=1608439503,245312181&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=333"
+                                alt="">
                         <div class="change">
-                            <select>
-                                <option>
-                                    中文
-                                </option>
-                                <option>
-                                    英文
-                                </option>
-                            </select>
+                            <el-dropdown
+                                    @command="ChangeLang(chengLang)">
+                                <span class="el-dropdown-link">
+                                  {{
+                                    upLang
+                                    }}
+                                  <el-icon
+                                          class="el-icon--right">
+                                    <arrow-down/>
+                                  </el-icon>
+                                </span>
+                                <template
+                                        #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item
+                                                command="英文">
+                                            {{
+                                            chengLang
+                                            }}
+                                        </el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
                         </div>
                     </div>
                     <!-- 设置全屏-->
@@ -150,9 +237,39 @@ function changeScreen() {
                                 alt="">
                     </div>
                     <!-- 用户信息-->
-                    <div class="userinfo"></div>
+                    <div class="userinfo">
+                        <div class="name">
+                            admin
+                        </div>
+                        <div class="type">
+                            辅导员
+                        </div>
+                    </div>
                     <!--  用户头像-->
-                    <div class="userimg"></div>
+                    <div class="userimg">
+                        <el-dropdown
+                                @command="ChangeLang"
+                                aria-expanded="true">
+                            <img aria-expanded="true"
+                                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4-lMtudkCpqfcYSjrZAFK_idZFy6eOetM4A&usqp=CAU"
+                                 alt="">
+                            <template
+                                    #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item
+                                            command="用户中心"
+                                            @click="userinfo">
+                                        用户中心
+                                    </el-dropdown-item>
+                                    <el-dropdown-item
+                                            command="退出登录"
+                                            @click="quitLogin">
+                                        退出登录
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
+                    </div>
                 </div>
             </div>
             <!--        主体-->
@@ -174,7 +291,7 @@ function changeScreen() {
   align-items: center;
   justify-content: space-between;
   padding-right: 25px;
-    overflow: hidden;
+  overflow: hidden;
 }
 
 //导航栏盒子
@@ -195,7 +312,7 @@ function changeScreen() {
     .top {
       width: 100%;
       height: 80px;
-      padding: 15px 0 15px 30px;
+      padding: 15px 0 15px 25px;
       font-size: 20px;
       font-weight: 800;
       display: flex;
@@ -209,6 +326,14 @@ function changeScreen() {
 
       span {
         white-space: nowrap
+      }
+
+      .enSystem {
+        flex: 1;
+        white-space: normal;
+        line-height: 23px;
+        font-size: 16px;
+        overflow: hidden;
       }
     }
 
@@ -284,7 +409,6 @@ function changeScreen() {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 25px;
 
   //  右侧头部
   .riTop {
@@ -323,8 +447,7 @@ function changeScreen() {
     //  右侧信息内容
 
     .riinfo {
-      width: 400px;
-      background-color: orange;
+      width: 360px;
       display: flex;
       align-items: center;
       justify-content: space-around;
@@ -338,15 +461,29 @@ function changeScreen() {
 
         img {
           width: 40px;
+          height: 26px;
         }
 
         .change {
-          select {
-            width: 70px;
-            border: none;
+          .el-dropdown {
+            display: block !important;
+            border: 3px solid transparent;
+            padding: 5px;
 
-            &:focus {
+            span {
               outline: none;
+            }
+          }
+
+          .example-showcase {
+            border: none !important;
+
+            .el-dropdown-link {
+              border: none !important;
+              cursor: pointer;
+              color: var(--el-color-primary);
+              display: flex;
+              align-items: center;
             }
           }
         }
@@ -362,6 +499,36 @@ function changeScreen() {
           height: 100%;
         }
       }
+
+      //用户信息
+      .userinfo {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        text-align: right;
+
+        .name {
+          font-size: 16px;
+          font-weight: 800;
+        }
+
+        .type {
+          font-size: 13px;
+        }
+      }
+
+      //用户头像
+      .userimg {
+        width: 40px;
+        height: 40px;
+        margin-left: 10px;
+
+        img {
+          width: 100%;
+          border-radius: 25px;
+          outline: none;
+        }
+      }
     }
   }
 
@@ -369,7 +536,9 @@ function changeScreen() {
   .RiMain {
     width: 100%;
     flex: 1;
-    background-color: #cfeefc;
+    background-color: #fff;
+    border-radius: 15px;
+    transition: .4s;
   }
 }
 </style>
