@@ -5,18 +5,21 @@ import axios from 'axios';
 
 // 通过axios创建实例
 let requests =axios.create({
-  baseURL:'http://8.130.28.129:9090',
+  baseURL:'/api',
   timeout: 10000,
 })
 
 // 设置请求拦截器  使请求头携带token
 requests.interceptors.request.use(function (config) {
+    const headers = config.headers;//获取请求头
+    const token = window.localStorage.getItem('token');//获取本地存储中的userInfo，解构出token
+    if(!headers.Authorization) headers.Authorization = `Bearer ${token}`;//附带上auth请求字段
     // 在发送请求之前做些什么
     return config;
-  }, function (error) {
+}, function (error) {
     // 对请求错误做些什么
     return Promise.reject(error);
-  });
+});
 
 
 // 设置响应拦截器  处理返回的数据

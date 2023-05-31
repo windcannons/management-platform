@@ -68,14 +68,6 @@
     </div>
 </template>
 
-<<<<<<< HEAD
-<script setup>
-import {getType} from '@/axios/api'
-import {onMounted} from "vue";
-onMounted(function(){
-    getType({}).then
-})
-=======
 <script lang="ts" setup>
 import * as echarts from "echarts"
 import {onMounted, getCurrentInstance} from "vue";
@@ -216,7 +208,6 @@ const tableData = [
     }
 ]
 
->>>>>>> xwh
 </script>
 
 <style

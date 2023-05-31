@@ -4,10 +4,15 @@
 import requests from './axios.js';
 
 // 通知管理 start
-let getType = (params={})=>{
-  return requests.get('/type',params)
+let notice = (params={})=>{
+  return requests.get('/notice/page',params)
 }
+
 // 通知管理 end
+// 登录start
+let login = (params={})=>{
+  return requests.post('/login',params)
+}
+// 登录end
 
-
-export {getType}
+export {notice,login}
