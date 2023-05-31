@@ -16,6 +16,8 @@ import router
     from './router'
 
 // 引入axios
+import axios
+    from "@/axios/axios";
 
 
 const app = createApp(App)
