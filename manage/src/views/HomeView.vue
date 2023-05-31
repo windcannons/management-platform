@@ -98,7 +98,7 @@ onMounted(() => {
         xAxis: [
             {
                 type: 'category',
-                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                data: ['小王', '小李', '小何', '小张', '小帅', '小丑', '小美'],
                 axisTick: {
                     alignWithLabel: true
                 }
@@ -114,7 +114,7 @@ onMounted(() => {
                 name: 'Direct',
                 type: 'bar',
                 barWidth: '60%',
-                data: [10, 52, 200, 334, 390, 330, 220]
+                data: [560, 699, 598, 597, 596, 535, 695]
             }
         ]
     });
@@ -138,7 +138,7 @@ onMounted(() => {
         },
         series: [
             {
-                name: '姓名',
+                name: '作业',
                 type: 'pie',
                 radius: '55%',
                 center: ['40%', '50%'],
@@ -158,7 +158,10 @@ onMounted(() => {
 function genData(count) {
     // prettier-ignore
 
-    const seriesData = [{name: "text1", value: "1"}, {name: "text2", value: "1"}];
+    const seriesData = [{name: "text1", value: "1"}, {name: "text2", value: "2"}, {
+        name: "text3",
+        value: "3"
+    }, {name: "text4", value: "1"}, {name: "text5", value: "4"}, {name: "text6", value: "0"}];
     return {
         seriesData: seriesData
     };
@@ -214,7 +217,6 @@ const tableData = [
         address: 'N',
     }
 ]
-
 </script>
 
 <style
@@ -225,31 +227,33 @@ const tableData = [
   display: flex;
   align-items: center;
   justify-content: space-around;
+  background-color: #f5f5f5;
   //左侧盒子
   .leBox {
-    flex: 1;
+    flex: 7;
     height: 100%;
     //background-color: skyblue;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-direction: column;
-
+    //轮播图区域
     .swiperBox {
       width: 100%;
       height: 50%;
       background-color: #fff;
       border-radius: 15px;
-        .el-carousel__button{
-            background-color: #000;
-            width: 100px;
-            height: 200px;
-        }
+
+      .el-carousel__button {
+        background-color: #000;
+        width: 100px;
+        height: 200px;
+      }
+
       //轮播图样式
       .el-carousel--horizontal {
         height: 100%;
         border-radius: 15px;
-
 
 
         .el-carousel__container {
@@ -277,7 +281,7 @@ const tableData = [
               padding-left: 20px;
             }
           }
-
+          //轮播图背景色
           .el-carousel__item h3 {
             color: #475669;
             opacity: 0.75;
@@ -287,7 +291,7 @@ const tableData = [
           }
 
           .el-carousel__item:nth-child(2n) {
-            background-color: #99a9bf;
+              background-color: #d3dce6;
           }
 
           .el-carousel__item:nth-child(2n + 1) {
@@ -298,7 +302,7 @@ const tableData = [
       }
 
     }
-
+    //底部区域
     .fot {
       width: 100%;
       height: 45%;
@@ -371,7 +375,7 @@ const tableData = [
 
   //右侧盒子
   .riBox {
-    width: 330px;
+    flex: 3;
     padding-left: 50px;
     height: 100%;
 
@@ -379,11 +383,15 @@ const tableData = [
       width: 100%;
       height: 100%;
       background-color: #fff;
+      padding: 10px 13px;
       border-radius: 25px;
 
       .riMsg {
         width: 100%;
         display: flex;
+        font-size: 14px;
+        font-weight: 800;
+        color: #4f4f4f;
         justify-content: space-around;
 
         div {
@@ -397,25 +405,32 @@ const tableData = [
         width: 100%;
         height: 30px;
         text-align: center;
+        color: #4f4f4f;
         line-height: 30px;
         font-size: 16px;
+        font-weight: 800;
       }
 
       .riul {
         width: 100%;
         height: 70%;
+        margin-top: 10px;
         //display: flex;
         //flex-direction: column;
         //align-items: center;
         overflow-x: hidden;
-          &::-webkit-scrollbar{
-              display: none;
-          }
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
 
         .rili {
           width: 100%;
           height: 35px;
           margin-top: 10px;
+          font-size: 14px;
+          font-weight: 600;
+          color: #283130;
           //background-color: #cdd6e5;
           display: flex;
           justify-content: space-around;
