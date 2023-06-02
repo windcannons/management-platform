@@ -1,18 +1,22 @@
 // 对请求接口进行封装
 
 // 引入封装好的axios实例
-import requests from './axios.js';
+import requests
+    from './axios.js';
 
 // 通知管理 start
-let notice = (params={})=>{
-  return requests.get('/notice/page',params)
+let notice = (currentPage = 1, size = 10) => {
+    return requests.get(`/notice/page?currentPage=${currentPage}&size=${size}`)
+}
+let delnotice = (id) => {
+    return requests.post('/notice/delete?nicId=' + id)
+}
+let addOrUpdate = (params = {}) => {
+    return requests.post(`/notice/addOrUpdate`, params)
 }
 
 // 通知管理 end
 // 登录start
-let login = (params={})=>{
-  return requests.post('/login',params)
-}
 // 登录end
 
 // 成绩管理start
@@ -26,4 +30,19 @@ let page = (params={})=>{
   return requests.get('/page',params)
 }
 // 获取学生列表end
-export {notice,login,Transcript,page}
+export {notice,Transcript,page}
+// 登录start
+let login = (params = {}) => {
+    return requests.post('/login', params)
+}
+let adminInfo = (params = {}) => {
+    return requests.get('/admin/info', params)
+}
+// 登录end
+
+export {
+    login,
+    delnotice,
+    addOrUpdate,
+    adminInfo
+}
