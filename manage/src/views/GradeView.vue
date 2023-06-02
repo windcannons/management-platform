@@ -4,7 +4,7 @@
         <div class="top">
             <!--      头部搜索盒子-->
             <div class="topLeft">
-                <input id="msg" type="text" placeholder="请输入课程名称">
+                <input id="msg" v-model="queryInput" type="text" placeholder="请输入课程名称">
                 <button class="logn" @click="logn">
                     <img
                             src="../../public/Grade/logn%20.png"
@@ -71,37 +71,39 @@
                 </tr>
                 <tr v-for="(item,index) in tableData" :key="index">
                     <td>
-                        {{ item.DateNum }}
+                        {{ item.stItmId }}
                     </td>
                     <td>
-                        {{ item.CourseID }}
+                        {{ item.stCompleteCount }}
                     </td>
                     <td>
-                        {{ item.CourseNo }}
+                        <p>
+                            {{ item.itmUUid }}
+                        </p>
                     </td>
                     <td>
-                        {{ item.CourseName }}
+                        {{ item.stItmTitle }}
                     </td>
                     <td>
-                        {{ item.StudentID }}
+                        {{ item.stUsername }}
                     </td>
                     <td>
-                        {{ item.StudentName }}
+                        {{ item.stName }}
                     </td>
                     <td>
-                        {{ item.TotalMeant }}
+                        {{ item.stTkCount }}
                     </td>
                     <td>
-                        {{ item.TotalCpd }}
+                        {{ item.stCompleteCount }}
                     </td>
                     <td>
-                        {{ item.AreHomework }}
+                        {{ item.stAverage }}
                     </td>
                     <td>
-                        {{ item.CTS }}
+                        {{ item.stTotalScore }}
                     </td>
                     <td>
-                        {{ item.CourseEnd }}
+                        {{ item.stEndTime }}
                     </td>
 
                 </tr>
@@ -109,25 +111,28 @@
         </div>
         <!--      分页        -->
         <div class="fot">
-            <el-pagination
-                    v-model:current-page="currentPage3"
-                    v-model:page-size="pageSize3"
-                    :small="small"
-                    :disabled="disabled"
-                    :background="background"
-                    layout="prev, pager, next, jumper"
-                    :total="1000"
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-            />
+          <div>
+              <el-pagination
+                  v-model:current-page="currentPage4"
+                  v-model:page-size="pageSize4"
+                  :page-sizes="[2, 4, 6, 10]"
+                  :disabled="disabled"
+                  :background="true"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  :total="total"
+                  @size-change="handleSizeChange"
+                  @current-change="handleSizeChange"
+              />
+          </div>
         </div>
     </div>
 
 </template>
 
 <script lang="ts" setup>
-import {ref} from 'vue'
-import { ElMessage } from 'element-plus'
+import {Transcript} from "@/axios/api"
+import {onMounted, reactive, ref} from 'vue'
+import {ElMessage} from 'element-plus'
 //导出点击
 const open2 = () => {
     ElMessage({
@@ -135,116 +140,53 @@ const open2 = () => {
         type: 'success',
     })
 }
+let queryInput = ref("")
+
 //搜索框点击事件
-function logn(){
-    const str=document.getElementById("msg");
-    console.log(str.value)
-}
-let currentPage1 = ref(5)
-let currentPage2 = ref(5)
-let currentPage3 = ref(5)
-let currentPage4 = ref(4)
-let pageSize2 = ref(100)
-let pageSize3 = ref(100)
-let pageSize4 = ref(100)
-let small = ref(false)
-let background = ref(false)
-let disabled = ref(false)
-
-function handleSizeChange(val) {
-    console.log(`${val} items per page`)
+function logn() {
+    console.log(queryInput.value);
+    // tableData = tableData.filter(item=>item.stName.match(queryInput.value))
 }
 
-const handleCurrentChange = (val) => {
-    console.log(`current page: ${val}`)
+
+let tableData = reactive([])
+// 一页显示个数
+const currentPage4 = ref(1)
+const pageSize4 = ref(10)
+const background = ref(true)
+const disabled = ref(false)
+
+const handleSizeChange = () => {
+    Transcript(currentPage4.value, pageSize4.value).then(res => {
+        tableData.splice(0, tableData.length)
+        res.data.data.forEach(item => {
+            tableData.push(item)
+        })
+    })
 }
+// 切换页面
+
+
 //axios请求数据
+const currentPage = ref(1) //当前页
+const total = ref(0) //总数
+const pageSize = ref(10) //当前页容量
+Transcript(currentPage.value,pageSize.value).then(res => {
+    total.value = res.data.total
+    res.data.data.forEach(item => {
+        tableData.push(item)
+    })
+})
 
-const tableData = [
-    {
-        DateNum: '1',
-        CourseID: '33',
-        CourseNo: 'a121ada120',
-        CourseName: '计算机',
-        StudentID: '1000125',
-        StudentName: '老王',
-        TotalMeant: '2',
-        TotalCpd: '2',
-        AreHomework: '70',
-        CTS: '100',
-        CourseEnd: '2022-3-1',
-    },
-    {
-        DateNum: '2',
-        CourseID: '33',
-        CourseNo: 'a121ada120',
-        CourseName: '计算机',
-        StudentID: '1000125',
-        StudentName: '老王',
-        TotalMeant: '2',
-        TotalCpd: '2',
-        AreHomework: '70',
-        CTS: '100',
-        CourseEnd: '2022-3-1',
-    },
-    {
-        DateNum: '3',
-        CourseID: '33',
-        CourseNo: 'a121ada120',
-        CourseName: '计算机',
-        StudentID: '1000125',
-        StudentName: '老王',
-        TotalMeant: '2',
-        TotalCpd: '2',
-        AreHomework: '70',
-        CTS: '100',
-        CourseEnd: '2022-3-1',
-    },
-    {
-        DateNum: '4',
-        CourseID: '33',
-        CourseNo: 'a121ada120',
-        CourseName: '计算机',
-        StudentID: '1000125',
-        StudentName: '老王',
-        TotalMeant: '2',
-        TotalCpd: '2',
-        AreHomework: '70',
-        CTS: '100',
-        CourseEnd: '2022-3-1',
-    },
-    {
-        DateNum: '5',
-        CourseID: '33',
-        CourseNo: 'a121ada120',
-        CourseName: '计算机',
-        StudentID: '1000125',
-        StudentName: '老王',
-        TotalMeant: '2',
-        TotalCpd: '2',
-        AreHomework: '70',
-        CTS: '100',
-        CourseEnd: '2022-3-1',
-    },
-    {
-        DateNum: '6',
-        CourseID: '33',
-        CourseNo: 'a121ada120',
-        CourseName: '计算机',
-        StudentID: '1000125',
-        StudentName: '老王',
-        TotalMeant: '2',
-        TotalCpd: '2',
-        AreHomework: '70',
-        CTS: '100',
-        CourseEnd: '2022-3-1',
-    }
-]
+
 </script>
 
 <style
     scoped lang="less">
 .main {
+  width: 100%;
+  height: 100%;
+    position: relative;
   padding: 20px;
   justify-content: center;
   align-items: center;
@@ -344,6 +286,7 @@ img {
       td, th {
         border: 1px solid #ccc;
 
+
         &:nth-child(1) {
           width: 6.4%;
         }
@@ -353,7 +296,15 @@ img {
         }
 
         &:nth-child(3) {
-          width: 23.5%;
+          width: 23.5% !important;
+
+          p {
+            width: 260px;
+            padding-right: 15px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
         }
 
         &:nth-child(4) {
@@ -414,10 +365,13 @@ img {
 }
 
 .fot {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    position: absolute;
+    bottom: 50px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 </style>

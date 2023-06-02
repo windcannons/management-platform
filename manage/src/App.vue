@@ -2,7 +2,9 @@
     setup>
 //echarts
 
-import * as echarts from "echarts";
+import * as echarts
+    from "echarts";
+
 provide("echarts", echarts);
 
 import {
@@ -16,9 +18,9 @@ import {
 
 import {
     ref,
-    reactive,
     provide,
-    onMounted
+    onMounted,
+    reactive,
 } from 'vue'
 
 // 引入全屏组件
@@ -26,6 +28,9 @@ import screenfull
     from "screenfull"
 import router
     from "@/router";
+import {
+    ElMessageBox
+} from "element-plus";
 
 // 页面名称
 let SystemName = ["教学管理系统", "Instructional Management System"]
@@ -125,11 +130,34 @@ function changeScreen() {
 
 // 用户信息
 function userinfo() {
-    router.replace({path: '/UserInfoView'})
+    ElMessageBox.alert(
+        '<strong>发布菜单</strong>',
+        'HTML String',
+        {
+            dangerouslyUseHTMLString: true,
+        }
+    )
 }
 
 // 退出登录
-function quitLogin() {
+const dialogVisible = ref(false)
+
+const handleClose = (done) => {
+    ElMessageBox.confirm('是否取消退出', '警告', {
+        type: 'info',
+        cancelButtonText: '取消',
+        confirmButtonText: '确认',
+    }).then(() => {
+        done()
+    }).catch(() => {
+
+    })
+}
+function CancelOut(){
+    dialogVisible.value = false
+}
+function SignOut(){
+    dialogVisible.value = false
     router.replace({path: '/LoginView'})
 }
 </script>
@@ -145,11 +173,15 @@ function quitLogin() {
                             src="../public/APP/logo.png"
                             alt="">
                     <span v-show="NowLang">
-                        {{ SystemName[0] }}
+                        {{
+                        SystemName[0]
+                        }}
                     </span>
                     <span v-show="!NowLang"
                           class="enSystem">
-                        {{ SystemName[1] }}
+                        {{
+                        SystemName[1]
+                        }}
                     </span>
                 </div>
                 <ul>
@@ -197,18 +229,22 @@ function quitLogin() {
                             alt="">
                 </div>
                 <div class="title">
-                    <span v-show="NowLang">{{ title[0] }}</span>
-                    <span v-show="!NowLang">{{ title[1] }}</span>
+                    <span v-show="NowLang">{{
+                        title[0]
+                        }}</span>
+                    <span v-show="!NowLang">{{
+                        title[1]
+                        }}</span>
                 </div>
                 <div class="riinfo">
                     <!-- 设置语言-->
                     <div class="lang">
                         <img v-show="NowLang"
-                                src="https://www.gov.cn/images/trs_m_gq.png"
-                                alt="">
+                             src="https://www.gov.cn/images/trs_m_gq.png"
+                             alt="">
                         <img v-show="!NowLang"
-                                src="https://img1.baidu.com/it/u=1608439503,245312181&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=333"
-                                alt="">
+                             src="https://img1.baidu.com/it/u=1608439503,245312181&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=333"
+                             alt="">
                         <div class="change">
                             <el-dropdown
                                     @command="ChangeLang(chengLang)">
@@ -254,7 +290,6 @@ function quitLogin() {
                     <!--  用户头像-->
                     <div class="userimg">
                         <el-dropdown
-                                @command="ChangeLang"
                                 aria-expanded="true">
                             <img aria-expanded="true"
                                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4-lMtudkCpqfcYSjrZAFK_idZFy6eOetM4A&usqp=CAU"
@@ -263,14 +298,20 @@ function quitLogin() {
                                     #dropdown>
                                 <el-dropdown-menu>
                                     <el-dropdown-item
-                                            command="用户中心"
-                                            @click="userinfo">
-                                        用户中心
+                                            command="用户中心">
+                                        <el-button
+                                                text
+                                                @click="userinfo">
+                                            用户信息
+                                        </el-button>
                                     </el-dropdown-item>
                                     <el-dropdown-item
-                                            command="退出登录"
-                                            @click="quitLogin">
-                                        退出登录
+                                            command="退出登录">
+                                        <el-button
+                                                text
+                                                @click="dialogVisible = true">
+                                            退出登录
+                                        </el-button>
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
@@ -278,6 +319,28 @@ function quitLogin() {
                     </div>
                 </div>
             </div>
+            <!--退出登录的弹窗-->
+            <el-dialog
+                    class="SignOut"
+                    v-model="dialogVisible"
+                    title="退出登录"
+                    width="30%"
+                    center
+                    :before-close="handleClose"
+            >
+                <span style="font-size: 18px">是否退出登录</span>
+                <template
+                        #footer>
+                    <span class="dialog-footer">
+                    <el-button @click="CancelOut">取消</el-button>
+                    <el-button
+                            type="danger"
+                            @click="SignOut">
+                        确定
+                    </el-button>
+                    </span>
+                </template>
+            </el-dialog>
             <!--        主体-->
             <div class="RiMain">
                 <RouterView></RouterView>
@@ -533,6 +596,10 @@ function quitLogin() {
           width: 100%;
           border-radius: 25px;
           outline: none;
+        }
+
+        .el-dropdown-menu__item {
+          justify-content: center;
         }
       }
     }

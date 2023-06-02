@@ -3,18 +3,18 @@
         <div class="leBox">
             <div class="swiperBox">
                 <el-carousel height="100%" :interval="5000" arrow="always">
-                    <el-carousel-item v-for="item in 4" :key="item">
+                    <el-carousel-item v-for="(item,index) in swiperData" :key="index">
                         <h2 class="swpTitle">通知栏</h2>
                         <ul class="swpMsg">
                             <li>
                                 <el-button type="primary">通知时间:</el-button>
-                                <p>2020.12.12.12</p></li>
+                                <p>{{ item.nicCreateTime }}</p></li>
                             <li>
                                 <el-button type="primary">通知人员:</el-button>
-                                <p>2020.12.12.12</p></li>
+                                <p>{{ item.nicUserName }}</p></li>
                             <li>
                                 <el-button type="primary">通知内容:</el-button>
-                                <p>2020.12.12.12</p></li>
+                                <div>{{ item.nicTitle }}</div></li>
                         </ul>
                     </el-carousel-item>
                 </el-carousel>
@@ -41,34 +41,14 @@
                     <div>状态</div>
                 </div>
                 <ul class="riul">
-                    <li class="rili">
-                        <div>1</div>
-                        <div><img src="../../public/Grade/applogo.jpg" alt=""></div>
-                        <div>老王</div>
+                    <li class="rili" v-for="(item,index) in stData" :key="index">
+                        <div>{{ item.id }}</div>
+                        <div><img :src="item.userFace" alt=""></div>
+                        <div>{{ item.name }}</div>
                         <div>
                             <el-button type="primary">已启动</el-button>
                         </div>
                     </li>
-                    <li class="rili">
-                        <div>2</div>
-                        <div><img src="../../public/Grade/applogo.jpg" alt=""></div>
-                        <div>老李</div>
-                        <div>
-                            <el-button type="primary">已启动</el-button>
-                        </div>
-                    </li>
-                    <li class="rili"></li>
-                    <li class="rili"></li>
-                    <li class="rili"></li>
-                    <li class="rili"></li>
-                    <li class="rili"></li>
-                    <li class="rili"></li>
-                    <li class="rili"></li>
-                    <li class="rili"></li>
-                    <li class="rili"></li>
-                    <li class="rili"></li>
-                    <li class="rili"></li>
-
                 </ul>
             </div>
         </div>
@@ -77,7 +57,10 @@
 
 <script lang="ts" setup>
 import * as echarts from "echarts"
-import {onMounted, getCurrentInstance} from "vue";
+import { notice,page} from "@/axios/api"
+import {onMounted, getCurrentInstance,reactive} from "vue";
+import {ElNotification} from "element-plus";
+
 
 onMounted(() => {
     //右侧echarts
@@ -121,40 +104,136 @@ onMounted(() => {
     // 左侧echarts
     let myEcharts = echarts.init(<HTMLElement>getCurrentInstance().proxy.$refs.myleChart)
     const data = genData(50);
-    myEcharts.setOption({
-        title: {
-            left: 'center'
-        },
+    myEcharts.setOption(    {
+        backgroundColor: 'rgba(255,255,255,0)',
         tooltip: {
             trigger: 'item',
-            formatter: '{a} <br/>{b} : {c} ({d}%)'
+            formatter: "{b}: <br/>{c} ({d}%)"
         },
-        legend: {
-            type: 'scroll',
+        color: ['#a6c5f6', '#4e8cee', '#00d2dd', '#80cc45', '#fd5151', '#4f8def', '#f56c6c'],
+        legend: { //图例组件，颜色和名字
+            x: '70%',
+            y: 'center',
             orient: 'vertical',
-            right: 10,
-            top: 20,
-            bottom: 20,
+            itemGap: 12, //图例每项之间的间隔
+            itemWidth: 10,
+            itemHeight: 10,
+            icon: 'rect',
+            data: ["语文","数学","历史","地理","化学"],
+            textStyle: {
+                color: [],
+                fontStyle: 'normal',
+                fontFamily: '微软雅黑',
+                fontSize: 12,
+            }
         },
-        series: [
-            {
-                name: '作业',
-                type: 'pie',
-                radius: '55%',
-                center: ['40%', '50%'],
-                data: data.seriesData,
+        series: [{
+            name: '作业数量',
+            type: 'pie',
+            clockwise: false, //饼图的扇区是否是顺时针排布
+            minAngle: 20, //最小的扇区角度（0 ~ 360）
+            center: ['35%', '50%'], //饼图的中心（圆心）坐标
+            radius: [40, 60], //饼图的半径
+            //  avoidLabelOverlap: true, ////是否启用防止标签重叠
+            itemStyle: { //图形样式
+                normal: {
+                    borderColor: 'transparent',
+                    borderWidth: 2,
+                },
+            },
+            label: { //标签的位置
+                normal: {
+                    show: true,
+                    position: 'inside', //标签的位置
+                    formatter: "{d}%",
+                    textStyle: {
+                        color: '#fff',
+                    }
+                },
                 emphasis: {
-                    itemStyle: {
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    show: true,
+                    textStyle: {
+                        fontWeight: 'bold'
                     }
                 }
-            }
-        ]
-    })
-})
+            },
+            data: [{name:"语文",value:2},{name:"数学",value:3},{name:"历史",value:2},{name:"地理",value:3},{name:"化学",value:2}]
 
+        }, {
+            name: '',
+            type: 'pie',
+            clockwise: false,
+            silent: true,
+            minAngle: 20, //最小的扇区角度（0 ~ 360）
+            center: ['35%', '50%'], //饼图的中心（圆心）坐标
+            radius: [0, 80], //饼图的半径
+            itemStyle: { //图形样式
+                normal: {
+                    borderColor: '#fff',
+                    borderWidth: 5,
+                    opacity: 0.21,
+                }
+            },
+            label: { //标签的位置
+                normal: {
+                    show: false,
+                }
+            },
+            data: [{name:"语文",value:2},{name:"数学",value:3},{name:"历史",value:2},{name:"地理",value:3},{name:"化学",value:2}]
+        }]
+    })
+    // myEcharts.setOption({
+    //     title: {
+    //         left: 'center'
+    //     },
+    //     tooltip: {
+    //         trigger: 'item',
+    //         formatter: '{a} <br/>{b} : {c} ({d}%)'
+    //     },
+    //     legend: {
+    //         type: 'scroll',
+    //         orient: 'vertical',
+    //         right: 10,
+    //         top: 20,
+    //         bottom: 20,
+    //     },
+    //     series: [
+    //         {
+    //             name: '作业',
+    //             type: 'pie',
+    //             radius: '55%',
+    //             center: ['40%', '50%'],
+    //             data: data.seriesData,
+    //             emphasis: {
+    //                 itemStyle: {
+    //                     shadowBlur: 10,
+    //                     shadowOffsetX: 0,
+    //                     shadowColor: 'rgba(0, 0, 0, 0.5)'
+    //                 }
+    //             }
+    //         }
+    //     ]
+    // })
+})
+//axios请求数据
+let swiperData = reactive([])
+notice().then(res=>{
+    // console.log(res.data.data.slice(0,5))
+    res.data.data.slice(0,5).forEach(item=>{
+
+        swiperData.push(item)
+    })
+
+})
+//获取学生列表
+let stData = reactive([])
+    page().then(res=>{
+    // console.log(res.data.data)
+    res.data.data.forEach(item=>{
+        stData.push(item)
+    })
+
+})
 function genData(count) {
     // prettier-ignore
 
@@ -259,13 +338,14 @@ const tableData = [
         .el-carousel__container {
           height: 100%;
           border-radius: 15px;
-
           .swpTitle {
             text-align: center;
             margin-top: 10px;
+              color: #595959;
           }
 
           .swpMsg {
+            width: 90%;
             justify-content: center;
             align-items: center;
           }
@@ -277,8 +357,15 @@ const tableData = [
             display: flex;
             align-items: center;
 
-            p {
-              padding-left: 20px;
+            p ,div{
+                width: 80%;
+                height: auto;
+                padding-left: 20px;
+                font-size: 16px;
+                color: #595959;
+                font-weight: 800;
+                word-wrap:break-word;
+                word-break:break-all;
             }
           }
           //轮播图背景色
@@ -316,11 +403,13 @@ const tableData = [
         border-radius: 15px;
         background-color: #fff;
 
+
         .fotTitle {
           height: 10%;
           padding-left: 20px;
           font-size: 16px;
           font-weight: 800;
+            line-height: 30px;
         }
 
         #leChart {
@@ -337,17 +426,13 @@ const tableData = [
               height: 100%;
             }
           }
-
-          //display: flex;
-          //padding-left: 20px;
-          //justify-content: center;
-          //align-items: center;
         }
 
         .fotRiTitle {
           height: 10%;
           padding-left: 20px;
           font-size: 16px;
+            line-height: 30px;
           font-weight: 800;
         }
 
