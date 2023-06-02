@@ -112,6 +112,9 @@ function loginBtn() {
         code: userLogin.code
     }).then(res => {
         window.localStorage.setItem("token", res.data.obj.token)
+        if (res.data.code===200){
+            router.replace({path: '/'})
+        window.localStorage.setItem("token", res.data.obj.token)
         if (res.data.code === 200) {
             adminInfo().then(ress=>{
                 console.log(ress)
@@ -120,8 +123,7 @@ function loginBtn() {
                     router.replace({path: '/'})
                 }
             })
-
-        }
+        }}
     })
 }
 
