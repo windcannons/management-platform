@@ -439,6 +439,7 @@ const handleSizeChange = () => {
             align-items: center;
 
             .ml-2 {
+
               margin-right: 5px;
             }
           }
