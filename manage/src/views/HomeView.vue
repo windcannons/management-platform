@@ -96,7 +96,7 @@ onMounted(() => {
             {
                 name: 'Direct',
                 type: 'bar',
-                barWidth: '60%',
+                barWidth: '80%',
                 data: [560, 699, 598, 597, 596, 535, 695]
             }
         ]
@@ -246,56 +246,6 @@ function genData(count) {
     };
 
 }
-
-
-const tableData = [
-    {
-        ID: '1',
-        usrPic: '',
-        name: 'Tom',
-        address: 'N',
-    }, {
-        ID: '1',
-        usrPic: '',
-        name: 'Tom',
-        address: 'N',
-    }, {
-        ID: '1',
-        usrPic: '',
-        name: 'Tom',
-        address: 'N',
-    }, {
-        ID: '1',
-        usrPic: '',
-        name: 'Tom',
-        address: 'N',
-    }, {
-        ID: '1',
-        usrPic: '',
-        name: 'Tom',
-        address: 'N',
-    }, {
-        ID: '1',
-        usrPic: '',
-        name: 'Tom',
-        address: 'N',
-    }, {
-        ID: '1',
-        usrPic: '',
-        name: 'Tom',
-        address: 'N',
-    }, {
-        ID: '1',
-        usrPic: '',
-        name: 'Tom',
-        address: 'N',
-    }, {
-        ID: '1',
-        usrPic: '',
-        name: 'Tom',
-        address: 'N',
-    }
-]
 </script>
 <style
     scoped lang="less">
@@ -354,9 +304,11 @@ const tableData = [
             margin-top: 15px;
             margin-left: 70px;
             display: flex;
-            align-items: center;
+            //align-items: center;
 
-            p ,div{
+            p{
+                display: flex;
+                align-items: center;
                 width: 80%;
                 height: auto;
                 padding-left: 20px;
@@ -366,6 +318,24 @@ const tableData = [
                 word-wrap:break-word;
                 word-break:break-all;
             }
+              div{
+                  width: 80%;
+                  height: auto;
+                  padding-left: 20px;
+                  font-size: 16px;
+                  color: #595959;
+                  font-weight: 800;
+                  word-wrap:break-word;
+                  word-break:break-all;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  /* 弹性伸缩盒子模型显示 */
+                  display: -webkit-box;
+                  /* 限制在一个块元素显示的文本的行数 */
+                  -webkit-line-clamp: 6;
+                  /* 设置或探索伸缩盒对象的子元素的排列方式 */
+                  -webkit-box-orient: vertical;
+              }
           }
           //轮播图背景色
           .el-carousel__item h3 {
@@ -401,12 +371,13 @@ const tableData = [
         height: 100%;
         border-radius: 15px;
         background-color: #fff;
+          padding-top: 10px;
 
 
         .fotTitle {
           height: 10%;
           padding-left: 20px;
-          font-size: 16px;
+          font-size: 18px;
           font-weight: 800;
             line-height: 30px;
         }
@@ -430,7 +401,7 @@ const tableData = [
         .fotRiTitle {
           height: 10%;
           padding-left: 20px;
-          font-size: 16px;
+          font-size: 18px;
             line-height: 30px;
           font-weight: 800;
         }
@@ -487,11 +458,12 @@ const tableData = [
 
       .riTitle {
         width: 100%;
-        height: 30px;
+        height: 50px;
         text-align: center;
         color: #4f4f4f;
-        line-height: 30px;
-        font-size: 16px;
+        line-height: 50px;
+
+        font-size: 20px;
         font-weight: 800;
       }
 

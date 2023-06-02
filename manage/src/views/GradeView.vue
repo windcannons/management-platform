@@ -1,6 +1,6 @@
 <template>
   <!--成绩管理-->
-    <div class="main">
+    <div class="main" @click="loseInp">
         <div class="top">
             <!--      头部搜索盒子-->
             <div class="topLeft">
@@ -143,18 +143,43 @@ const open2 = () => {
 let queryInput = ref("")
 
 //搜索框点击事件
-function logn() {
-    console.log(queryInput.value);
-    // tableData = tableData.filter(item=>item.stName.match(queryInput.value))
-}
-
-
 let tableData = reactive([])
 // 一页显示个数
 const currentPage4 = ref(1)
 const pageSize4 = ref(10)
 const background = ref(true)
 const disabled = ref(false)
+
+function logn() {
+    if (queryInput.value){
+        Transcript(currentPage4.value, pageSize4.value,queryInput.value).then(res => {
+            tableData.splice(0, tableData.length)
+            res.data.data.forEach(item => {
+                tableData.push(item)
+            })
+        })
+    }else{
+        ElMessage({
+            message: '请先输入内容！！！',
+            type: 'error',
+        })
+    }
+    console.log(queryInput.value);
+    // tableData = tableData.filter(item=>item.stName.match(queryInput.value))
+}
+function loseInp(){
+   if (!queryInput.value){
+       Transcript(currentPage4.value, pageSize4.value,queryInput.value).then(res => {
+           tableData.splice(0, tableData.length)
+           res.data.data.forEach(item => {
+               tableData.push(item)
+           })
+       })
+   }
+}
+
+
+
 
 const handleSizeChange = () => {
     Transcript(currentPage4.value, pageSize4.value).then(res => {

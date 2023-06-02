@@ -20,8 +20,8 @@ let addOrUpdate = (params = {}) => {
 // 登录end
 
 // 成绩管理start
-let Transcript = (page=1,size=10)=>{
-  return requests.get(`/course/studentTranscript?currentPage=${page}&size=${size}`)
+let Transcript = (page=1,size=10,text="")=>{
+  return requests.get(`/course/studentTranscript?currentPage=${page}&size=${size}&itmId=${text}`)
 }
 
 // 成绩管理end
