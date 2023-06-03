@@ -74,6 +74,7 @@
 <script
     setup>
 import {
+    adminInfo,
     login
 } from "@/axios/api"
 import {
@@ -81,6 +82,11 @@ import {
 } from "vue";
 import router
     from "@/router";
+import {
+    ElNotification
+} from 'element-plus'
+
+
 // 获取验证码
 // captcha().then(res=>{
 //     console.log(res)
@@ -105,10 +111,16 @@ function loginBtn() {
         password: userLogin.pass,
         code: userLogin.code
     }).then(res => {
-        console.log(res)
         window.localStorage.setItem("token", res.data.obj.token)
-        if (res.data.code===200){
-            router.replace({path: '/'})
+        if (res.data.code === 200) {
+            adminInfo().then(ress=>{
+                console.log(ress)
+                if (ress.status===200){
+                    window.localStorage.setItem("admin",JSON.stringify(ress.data))
+                    router.replace({path: '/'})
+                }
+            })
+
         }
     })
 }
