@@ -193,6 +193,7 @@ import {
 } from 'vue'
 import {
     delnotice,
+    notice,
     addOrUpdate
 } from "@/axios/api"
 // 通知列表
@@ -205,17 +206,6 @@ let upInfoText = ref("")
 // 是否为发布通知
 let operator = ref(true)
 let infoid = ref("")
-
-// 获取通知分页
-import {
-    notice
-} from "@/axios/api"
-
-onMounted(() => {
-    notice().then(res => {
-        console.log(res)
-    })
-})
 
 function changeShowInfo(judge, nicId, text) {
     showinfo.value = true
