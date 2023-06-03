@@ -2,7 +2,8 @@
   <!--用户管理-->
   <!--  <h1>用户管理</h1>-->
   <div
-      class="box">
+      class="box"
+      @click.stop="showall">
     <!--头部搜索和功能大盒子-->
     <div
         class="top">
@@ -11,9 +12,13 @@
           class="topLeft">
         <input
             type="text"
-            placeholder="请输入学生姓名，登录账号，地址">
+            placeholder="请输入学生姓名，登录账号，地址"
+            v-model="sousuoValue"
+        >
         <button
-            class="btn">
+            class="btn"
+            @click="sousuo"
+        >
           <img
               src="../../public/UserView/fdj.png"
               alt="">
@@ -26,44 +31,46 @@
         <!--        添加按钮弹出框-->
         <el-button
             text
-            @click="addValue = true"
+            @click="bianjiChange(0,true)"
             class="btnRight">
           <img
               src="../../public/UserView/jia.png"
               alt="">&nbsp添加
         </el-button>
+
         <el-dialog
             v-model="addValue"
-            title="添加"
+            :title="operate?'添加':'修改'"
             width="30%"
             draggable>
-          <!--          弹出框样式-->
-          <!--          <span>It's a draggable Dialog</span>-->
           <el-form>
             <el-form-item
                 label="学生姓名："
                 label-width="120px">
               <el-input
+                  v-model="form.name"
                   style="width: 240px;"/>
             </el-form-item>
             <el-form-item
                 label="登录账号："
                 label-width="120px">
               <el-input
+                  :readonly="!operate"
+                  v-model="form.username"
                   style="width: 240px;"/>
             </el-form-item>
             <el-form-item
                 label="角色："
                 label-width="120px">
-              <!--              单选按钮需要v-m才能点击-->
               <el-radio-group
+                  v-model="form.teacher"
                   style="width: 240px;">
                 <el-radio
-                    :label="1">
+                    :label="false">
                   学生
                 </el-radio>
                 <el-radio
-                    :label="2">
+                    :label="true">
                   老师
                 </el-radio>
               </el-radio-group>
@@ -72,14 +79,11 @@
                 label="状态："
                 label-width="120px">
               <el-radio-group
+                  v-model="form.enabled"
                   style="width: 240px;">
                 <el-radio
-                    :label="1">
+                    :label="true">
                   启用
-                </el-radio>
-                <el-radio
-                    :label="0">
-                  禁用
                 </el-radio>
               </el-radio-group>
             </el-form-item>
@@ -87,162 +91,173 @@
                 label="电话："
                 label-width="120px">
               <el-input
+                  v-model="form.phone"
                   style="width: 240px;"/>
             </el-form-item>
             <el-form-item
                 label="头像地址："
                 label-width="120px">
               <el-input
+                  v-model="form.userFace"
                   style="width: 240px;"/>
             </el-form-item>
             <el-form-item
                 label="地址："
                 label-width="120px">
               <el-input
+                  v-model="form.address"
                   style="width: 240px;"/>
             </el-form-item>
           </el-form>
-
-
           <template
               #footer>
       <span
           class="dialog-footer">
         <el-button
-            @click="addValue = false">提交</el-button>
-        <el-button
             type="primary"
-            @click="addValue = false">
-          取消
-        </el-button>
+            @click="handleSubmit">提交</el-button>
+        <el-button
+            @click="cancelset">取消</el-button>
       </span>
           </template>
         </el-dialog>
         <!--添加按钮弹出框结束-->
         <!--        模板按钮弹出框-->
-        <el-button
-            text
-            @click="mubanValue = true"
-            class="btnRight"
-            style="background-color: #e6a23c"
-            id="muBanBtn">
-          <img
-              src="../../public/UserView/mb.png"
-              alt="">新增模板
-        </el-button>
+        <!--<el-button-->
+        <!--    text-->
+        <!--    @click="mubanValue = true"-->
+        <!--    class="btnRight"-->
+        <!--    style="background-color: #e6a23c"-->
+        <!--    id="muBanBtn">-->
+        <!--  <img-->
+        <!--      src="../../public/UserView/mb.png"-->
+        <!--      alt="">新增模板-->
+        <!--</el-button>-->
 
-        <el-dialog
-            title="模板文件"
-            v-model="mubanValue"
-            width="40%"
-        >
-          <el-form>
-            <el-form-item
-                label="模板路径："
-                label-width="120px">
-              <el-input/>
-            </el-form-item>
-            <el-form-item
-                label="备注："
-                label-width="120px">
-              <el-input/>
-            </el-form-item>
-          </el-form>
+        <!--<el-dialog-->
+        <!--    title="模板文件"-->
+        <!--    v-model="mubanValue"-->
+        <!--    width="40%"-->
+        <!--&gt;-->
+        <!--  <el-form>-->
+        <!--    <el-form-item-->
+        <!--        label="模板路径："-->
+        <!--        label-width="120px">-->
+        <!--      <el-input/>-->
+        <!--    </el-form-item>-->
+        <!--    <el-form-item-->
+        <!--        label="备注："-->
+        <!--        label-width="120px">-->
+        <!--      <el-input/>-->
+        <!--    </el-form-item>-->
+        <!--  </el-form>-->
 
-          <template
-              #footer>
-            <el-button
-                @click="mubanValue = false">
-              取消
-            </el-button>
-            <el-button
-                type="primary"
-                @click="mubanValue = false">
-              提交
-            </el-button>
-          </template>
-        </el-dialog>
-        <!--模板按钮弹出框结束-->
-        <!--        导入弹出框-->
+        <!--  <template-->
+        <!--      #footer>-->
+        <!--    <el-button-->
+        <!--        @click="mubanValue = true">-->
+        <!--      取消-->
+        <!--    </el-button>-->
+        <!--    <el-button-->
+        <!--        type="primary"-->
+        <!--        @click="mubanValue = false">-->
+        <!--      提交-->
+        <!--    </el-button>-->
+        <!--  </template>-->
+        <!--</el-dialog>-->
+        <!--&lt;!&ndash;模板按钮弹出框结束&ndash;&gt;-->
+        <!--&lt;!&ndash;        导入弹出框&ndash;&gt;-->
 
-        <el-button
-            text
-            @click="daoruValue = true"
-            class="btnRight">
-          <img
-              src="../../public/UserView/dr.png"
-              alt="">&nbsp导入
-        </el-button>
-        <el-dialog
-            title="导入文件"
-            v-model="daoruValue"
-            width="40%"
-        >
-          <el-form>
-            <div
-                class="flex-align">
-              <el-button
-                  label-width="150px"
-                  type="primary">
-                选择文件
-              </el-button>
-              <el-form-item
-                  label="只能上传Excel文件"
-                  label-width="150px"></el-form-item>
-            </div>
-          </el-form>
+        <!--<el-button-->
+        <!--    text-->
+        <!--    @click="daoruValue = true"-->
+        <!--    class="btnRight">-->
+        <!--  <img-->
+        <!--      src="../../public/UserView/dr.png"-->
+        <!--      alt="">&nbsp导入-->
+        <!--</el-button>-->
+        <!--<el-dialog-->
+        <!--    title="导入文件"-->
+        <!--    v-model="daoruValue"-->
+        <!--    width="40%"-->
+        <!--&gt;-->
+        <!--  <el-form>-->
+        <!--    <div-->
+        <!--        class="flex-align">-->
+        <!--      <el-button-->
+        <!--          label-width="150px"-->
+        <!--          type="primary">-->
+        <!--        选择文件-->
+        <!--      </el-button>-->
+        <!--      <el-form-item-->
+        <!--          label="只能上传Excel文件"-->
+        <!--          label-width="150px"></el-form-item>-->
+        <!--    </div>-->
+        <!--  </el-form>-->
 
-          <template
-              #footer>
-            <el-button
-                @click="daoruValue = false">
-              取消
-            </el-button>
-            <el-button
-                type="primary"
-                @click="daoruValue = false">
-              提交
-            </el-button>
-          </template>
-        </el-dialog>
-        <!--        导入弹出框结束-->
-        <!--        错误记录弹出框-->
+        <!--  <template-->
+        <!--      #footer>-->
+        <!--    <el-button-->
+        <!--        @click="daoruValue = false">-->
+        <!--      取消-->
+        <!--    </el-button>-->
+        <!--    <el-button-->
+        <!--        type="primary"-->
+        <!--        @click="daoruValue = false">-->
+        <!--      提交-->
+        <!--    </el-button>-->
+        <!--  </template>-->
+        <!--</el-dialog>-->
+        <!--&lt;!&ndash;        导入弹出框结束&ndash;&gt;-->
+        <!--&lt;!&ndash;        错误记录弹出框&ndash;&gt;-->
 
-        <el-button
-            text
-            @click="cuowuValue = true"
-            class="btnBig"
-            style="background-color:#909399"
-        >
-          <img
-              src="../../public/UserView/cwjl.png"
-              alt="">&nbsp错误记录
-        </el-button>
-        <el-dialog
-            title="导入记录"
-            v-model="cuowuValue"
-            width="50%">
-          <el-table :data="tableData" border style="width: 100%">
-            <el-table-column prop="date" label="数据编号" width="180" />
-            <el-table-column prop="name" label="错误信息" width="350" />
-            <el-table-column prop="address" label="导入时间" />
-          </el-table>
-          <div class="demo-pagination-block">
-            <el-pagination
-                :page-sizes="[100, 200, 300, 400]"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="400"
-            />
-          </div>
-          <template
-              #footer>
-            <el-button
-                type="primary"
-                @click="cuowuValue = false">
-              确定
-            </el-button>
-          </template>
-        </el-dialog>
+        <!--<el-button-->
+        <!--    text-->
+        <!--    @click="cuowuValue = true"-->
+        <!--    class="btnBig"-->
+        <!--    style="background-color:#909399"-->
+        <!--&gt;-->
+        <!--  <img-->
+        <!--      src="../../public/UserView/cwjl.png"-->
+        <!--      alt="">&nbsp错误记录-->
+        <!--</el-button>-->
+        <!--<el-dialog-->
+        <!--    title="导入记录"-->
+        <!--    v-model="cuowuValue"-->
+        <!--    width="50%">-->
+        <!--  <el-table-->
+        <!--      :data="tableData"-->
+        <!--      border-->
+        <!--      style="width: 100%">-->
+        <!--    <el-table-column-->
+        <!--        prop="date"-->
+        <!--        label="数据编号"-->
+        <!--        width="180"/>-->
+        <!--    <el-table-column-->
+        <!--        prop="name"-->
+        <!--        label="错误信息"-->
+        <!--        width="350"/>-->
+        <!--    <el-table-column-->
+        <!--        prop="address"-->
+        <!--        label="导入时间"/>-->
+        <!--  </el-table>-->
+        <!--  <div-->
+        <!--      class="demo-pagination-block">-->
+        <!--    <el-pagination-->
+        <!--        :page-sizes="[100, 200, 300, 400]"-->
+        <!--        layout="total, sizes, prev, pager, next, jumper"-->
+        <!--        :total="400"-->
+        <!--    />-->
+        <!--  </div>-->
+        <!--  <template-->
+        <!--      #footer>-->
+        <!--    <el-button-->
+        <!--        type="primary"-->
+        <!--        @click="cuowuValue = false">-->
+        <!--      确定-->
+        <!--    </el-button>-->
+        <!--  </template>-->
+        <!--</el-dialog>-->
 
         <!--        错误记录弹出框结束-->
         <button
@@ -265,10 +280,12 @@
         <thead>
         <tr>
           <th class="col-checkbox">
+            <!--复选-->
             <input
                 type="checkbox"
                 v-model="allChecked"
-                @change="checkAll"/>
+                @change="checkAll"
+            />
           </th>
           <th class="col-no">
             编号
@@ -305,14 +322,16 @@
         </thead>
         <!--        表身-->
         <tbody>
-        <tr v-for="(item, index) in data"
+        <!--尝试返回的一个布尔值-->
+        <tr v-for="item in state"
             :class="{active: item.checked}"
-            :key="index">
+            :key="item.id">
           <td class="col-checkbox">
             <input
                 type="checkbox"
                 v-model="item.checked"
-                @change="checkItem"/>
+                @change="checkli"
+            />
           </td>
           <td class="col-no">
             {{
@@ -322,8 +341,7 @@
           <td class="col-avatar"
               style="text-align: center">
             <img
-                :src="item.avatar"
-                alt="头像">
+                :src="item.userFace">
           </td>
           <td class="col-name">
             {{
@@ -333,13 +351,13 @@
           <!--          账号-->
           <td class="col-account">
             {{
-              item.account
+              item.username
             }}
           </td>
           <!--          角色-->
           <td class="col-role">
             {{
-              item.role
+              item.teacher ? '老师' : '学生'
             }}
           </td>
           <td class="col-phone">
@@ -356,9 +374,10 @@
           <!--          状态-->
           <td class="col-status">
             <el-switch
-                v-model="item.status"
+                v-model="item.enabled"
                 class="ml-2"
                 style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+                @change="enabledInfo(item)"
             />
           </td>
           <td class="col-password">
@@ -367,70 +386,61 @@
             }}
           </td>
           <td class="col-operation">
-            <button
-                class="edit"
-                @click="edit(index)"
-                style="color: #909399">
+            <!--编辑弹窗-->
+            <el-button
+                text
+                @click="bianjiChange(item,false)"
+                style="background-color: white">
               编辑
-            </button>
-            <button
+            </el-button>
+            <el-button
+                @click="delinfo(item.id)"
                 class="delete"
-                @click="remove(index)"
                 style="color: white ;background-color: #f56c6c">
               删除
-            </button>
+            </el-button>
           </td>
         </tr>
         </tbody>
       </table>
+      <el-dialog
+          v-model="dialogVisible"
+          title="删除"
+          width="30%"
+          :before-close="handleClose"
+      >
+        <span>是否删除此数据</span>
+        <template
+            #footer>
+      <span
+          class="dialog-footer">
+        <el-button
+            @click="dialogVisible = false">取消</el-button>
+        <el-button
+            type="primary"
+            @click="remove">
+          确认
+        </el-button>
+      </span>
+        </template>
+      </el-dialog>
     </div>
     <!--尾部分页盒子-->
     <div
         class="bottom">
-
-      <div>
-        共：
-        条
-      </div>
-      <!--      分页盒子-->
-      <div>
-        <el-pagination
-            background
-            layout="prev, pager, next"
-            :total="100"/>
-      </div>
-      <!--      下拉盒子-->
       <div
-          class="inputBox">
-        <!--        下拉列表组件-->
-        <div
-            class="flex flex-wrap items-center">
-          <el-dropdown>
-            <el-button
-                type="primary">
-              10条/页
-              <el-icon
-                  class="el-icon--right"></el-icon>
-            </el-button>
-            <template
-                #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item>
-                  5条/页
-                </el-dropdown-item>
-                <el-dropdown-item>
-                  8条/页
-                </el-dropdown-item>
-
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
-      </div>
-
-      <div>
-        当前：
-        页
+          class="fotMain">
+        <el-pagination
+            v-model:current-page="currentPage4"
+            v-model:page-size="pageSize4"
+            :page-sizes="[2,4,6,8,10]"
+            :disabled="disabled"
+            :background="background"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total"
+            @size-change="handleSizeChange"
+            @current-change="handleSizeChange"
+        />
       </div>
     </div>
   </div>
@@ -441,19 +451,141 @@
 import {
   reactive,
   toRefs,
-  ref
+  ref,
 } from 'vue'
 // 下拉组件引入
-import {ArrowDown} from '@element-plus/icons-vue'
+import {
+  ElMessageBox,
+  ElNotification
+} from 'element-plus'
+// 引入用户列表
+import {
+  page,
+  deleteAdmin,
+  addAdmin,
+  deleteAdmins,
+  adminInfo
+} from "../axios/api";
+
 
 export default {
   name: "UserView",
   setup() {
+
+    // 状态点击
+    let enabledInfo = (item) => {
+      console.log(item)
+      let params = {
+        id: item.id,
+        enabled: item.enabled
+      }
+      adminInfo(params).then(res => {
+        console.log(res)
+        if (res.data.code === 200) {
+          page().then(res => {
+            state.splice(0, state.length)
+            res.data.data.forEach(item => {
+              state.push(item)
+            })
+          })
+          ElNotification({
+            title: 'Success',
+            message: 'This is a success message',
+            type: 'success',
+          })
+        }
+      })
+    }
+
+
+    // 分页样式
+    const currentPage4 = ref(1)
+    const pageSize4 = ref(10)
+    const background = ref(true)
+    const disabled = ref(false)
+
+    const handleSizeChange = () => {
+      page(currentPage4.value, pageSize4.value, sousuoValue.value).then(res => {
+        state.splice(0, state.length)
+        res.data.data.forEach(item => {
+          state.push(item)
+        })
+      })
+    }
+    // 复选功能
+    const selectAll = ref(false)
     let value = ref(false)
-    // 添加框的布尔值
+    // 添加框的布尔值和双向绑定值加方法
     const addValue = ref(false)
+    //判断当前操作位添加还是删除
+    let operate = ref(true)
+    // 添加表格的存储对象
+    let form = reactive({ // 存储表单项的值
+      name: '',
+      username: '',
+      enabled: true,
+      teacher: false,
+      phone: '',
+      userFace: '',
+      address: '',
+      id:0
+    })
+
+    let bianjiChange = (item, operater) => {
+      addValue.value = true
+      operate.value = operater
+      if (item === 0) {
+        form.id = 0
+      } else {
+        for (let k in item) {
+          form[k] = item[k]
+        }
+      }
+    }
+    const handleSubmit = () => {
+      // 在这里处理表单提交逻辑
+      addAdmin(form).then(ress => {
+        if (ress.data.code === 200) {
+          addValue.value = false
+          page().then(res => {
+            state.splice(0, state.length)
+            res.data.data.forEach(item => {
+              state.push(item)
+            })
+            ElNotification({
+              title: 'Success',
+              message: ress.data.message,
+              type: 'success',
+            })
+          })
+          for (let k in form) {
+            form[k] = ""
+          }
+          form.enabled = true
+          form.teacher = false
+        }else{
+          addValue.value = true
+          ElNotification({
+            title: 'Error',
+            message: ress.data.message,
+            type: 'error',
+          })
+        }
+      })
+    }
     // 模板框的布尔值
     const mubanValue = ref(false)
+
+    function cancelset() {
+      addValue.value = false
+      for (let k in form) {
+        form[k] = ""
+      }
+      form.enabled = true
+      form.teacher = false
+      console.log(form)
+    }
+
     // 导入框布尔值
     const daoruValue = ref(false)
     // 错误记录框布尔值
@@ -481,171 +613,129 @@ export default {
         address: 'No. 189, Grove St, Los Angeles',
       },
     ]
-    // 初始化表格数据
-    let state = reactive({
-      data: [
-        {
-          id: 1,
-          avatar: 'https://via.placeholder.com/50x50',
-          name: '张三',
-          account: 'zhangsan',
-          role: '学生',
-          phone: '138****',
-          address: '北京市海淀区*****',
-          status: 'false',
-          password: '******',
-          checked: false,
-        },
-        {
-          id: 2,
-          avatar: 'https://via.placeholder.com/50x50',
-          name: '李四',
-          account: 'lisi',
-          role: '教师',
-          phone: '138****',
-          address: '北京市朝阳区*****',
-          status: 'false',
-          password: '******',
-          checked: false,
-        },
-        {
-          id: 3,
-          avatar: 'https://via.placeholder.com/50x50',
-          name: '王五',
-          account: 'wangwu',
-          role: '管理员',
-          phone: '138****',
-          address: '北京市东城区*****',
-          status: 'false',
-          password: '******',
-          checked: false,
-        },
-        {
-          id: 4,
-          avatar: 'https://via.placeholder.com/50x50',
-          name: '张三',
-          account: 'zhangsan',
-          role: '学生',
-          phone: '138****',
-          address: '北京市海淀区*****',
-          status: 'false',
-          password: '******',
-          checked: false,
-        },
-        {
-          id: 5,
-          avatar: 'https://via.placeholder.com/50x50',
-          name: '张三',
-          account: 'zhangsan',
-          role: '学生',
-          phone: '138****',
-          address: '北京市海淀区*****',
-          status: 'false',
-          password: '******',
-          checked: false,
-        },
-        {
-          id: 6,
-          avatar: 'https://via.placeholder.com/50x50',
-          name: '张三',
-          account: 'zhangsan',
-          role: '学生',
-          phone: '138****',
-          address: '北京市海淀区*****',
-          status: 'false',
-          password: '******',
-          checked: false,
-        },
-        {
-          id: 7,
-          avatar: 'https://via.placeholder.com/50x50',
-          name: '张三',
-          account: 'zhangsan',
-          role: '学生',
-          phone: '138****',
-          address: '北京市海淀区*****',
-          status: 'false',
-          password: '******',
-          checked: false,
-        },
-        {
-          id: 8,
-          avatar: 'https://via.placeholder.com/50x50',
-          name: '张三',
-          account: 'zhangsan',
-          role: '学生',
-          phone: '138****',
-          address: '北京市海淀区*****',
-          status: 'false',
-          password: '******',
-          checked: false,
-        },
-        {
-          id: 9,
-          avatar: 'https://via.placeholder.com/50x50',
-          name: '张三',
-          account: 'zhangsan',
-          role: '学生',
-          phone: '138****',
-          address: '北京市海淀区*****',
-          status: 'false',
-          password: '******',
-          checked: false,
-        },
-        {
-          id: 10,
-          avatar: 'https://via.placeholder.com/50x50',
-          name: '张三',
-          account: 'zhangsan',
-          role: '学生',
-          phone: '138****',
-          address: '北京市海淀区*****',
-          status: 'false',
-          password: '******',
-          checked: false,
-        },
+    // 用户列表axios获取
+    let total = ref(0)
 
-      ],
-      // 全选状态
-      allChecked: false,
-    })
-
-    // 全选/取消全选
-    const checkAll = (event) => {
-      state.data.forEach(item => {
-        item.checked = event.target.checked
-      })
-    }
-
-    // 单选/取消单选
-    const checkItem = () => {
-      let allChecked = true
-      state.data.forEach(item => {
-        if (!item.checked) {
-          allChecked = false
+    let state = reactive([])
+    page().then(res => {
+      total.value = res.data.total
+      const data = res.data.data.map(item => {
+        return {
+          ...item,
+          checked: false
         }
       })
-      state.allChecked = allChecked
+      state.splice(0, state.length, ...data)
+    })
+    // 全选
+    // 全选暂定属性
+    let allChecked = ref(false)
+    const checkAll = () => {
+      for (let i = 0; i < state.length; i++) {
+        state[i].checked = allChecked.value
+      }
     }
+
+// 单选的反全选事件
+    function checkli() {
+      let allche = true
+      for (let i = 0; i < state.length; i++) {
+        if (!state[i].checked) {
+          allche = false
+        }
+      }
+      allChecked.value = allche
+    }
+
 
     // 编辑行数据
     const edit = (index) => {
       console.log(index)
     }
 
+    const dialogVisible = ref(false)
+    const handleClose = (done) => {
+      ElMessageBox.confirm('是否取消删除', '警告', {
+        type: 'info',
+        cancelButtonText: '取消',
+        confirmButtonText: '确认',
+      }).then(() => {
+        done()
+      }).catch(() => {
+
+      })
+    }
+    let delId = ref("")
+
+    function delinfo(id) {
+      console.log(id)
+      delId.value = id
+      dialogVisible.value = true
+    }
+
     // 删除行数据
-    const remove = (index) => {
-      state.data.splice(index, 1)
+    const remove = () => {
+      dialogVisible.value = false
+      deleteAdmin(delId.value).then(res => {
+        console.log(res)
+        if (res.data.code === 200) {
+          page().then(res => {
+            state.splice(0, state.length)
+            res.data.data.forEach(item => {
+              state.push(item)
+            })
+          })
+          ElNotification({
+            title: 'Success',
+            message: res.data.message,
+            type: 'success',
+          })
+        }
+      })
     }
-    // 批量删除
+
+    // 批量删除，并把获取选中数据的id存进数组里
     const batchRemove = () => {
-      state.data = state.data.filter(item => !item.checked)
-      state.allChecked = false
+      const checkedIds = Object.keys(state).filter(key => state[key].checked).map(key => state[key].id);
+      console.log(checkedIds);
+      deleteAdmins(checkedIds).then(res => {
+        console.log(res)
+        if (res.data.code === 200) {
+          page().then(res => {
+            state.splice(0, state.length)
+            res.data.data.forEach(item => {
+              state.push(item)
+            })
+          })
+          ElNotification({
+            title: 'Success',
+            message: 'This is a success message',
+            type: 'success',
+          })
+        }
+      })
     }
+    // 搜索
+    const sousuoValue = ref('');
+    const sousuo = () => {
+      page(currentPage4.value, pageSize4.value, sousuoValue.value).then(res => {
+        if (res.status === 200) {
+          state.splice(0, state.length)
+          total.value = res.data.total
+          res.data.data.forEach(item => {
+            state.push(item)
+          })
+        }
+      })
+    };
+
     return {
       ...toRefs(state),
+      selectAll,
       checkAll,
-      checkItem,
+      state,
+      allChecked,
+      // checkItem,
       edit,
       remove,
       batchRemove,
@@ -654,8 +744,26 @@ export default {
       mubanValue,
       daoruValue,
       cuowuValue,
-      tableData
-
+      tableData,
+      dialogVisible,
+      handleClose,
+      delinfo,
+      delId,
+      form,
+      handleSubmit,
+      checkli,
+      background,
+      disabled,
+      currentPage4,
+      pageSize4,
+      handleSizeChange,
+      total,
+      enabledInfo,
+      bianjiChange,
+      sousuo,
+      sousuoValue,
+      operate,
+      cancelset
     }
   }
 }
@@ -666,9 +774,10 @@ export default {
     lang="less">
 .box {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background-color: white;
   padding: 15px;
+  position: relative;
 }
 
 .top {
@@ -716,7 +825,7 @@ img {
   height: 100%;
   /*background-color: #2c3e50;*/
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end
 }
 
 //右边三个小按钮样式
@@ -766,9 +875,11 @@ img {
 .header-cell {
   border: 1px solid #ebeef5;
 }
-.el-pagination{
+
+.el-pagination {
   justify-content: space-between;
 }
+
 /*中间*/
 .center {
   width: 100%;
@@ -850,34 +961,12 @@ img {
 /*尾部*/
 .bottom {
   width: 100%;
-  height: 5vh;
-  /*background-color: #4e8cee;*/
-  margin-top: 15px;
+  position: absolute;
+  bottom: 30px;
+  left: 0;
   display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-
-  input {
-    width: 100px;
-    margin-left: 15px;
-  }
-
-  div {
-    width: 20%;
-    height: 100%;
-    text-align: center;
-    font-size: 15px;
-    line-height: 6vh;
-    margin-top: 3px;
-  }
-
-  .inputBox {
-    margin-left: 100px;
-
-    span {
-      font-size: 12px;
-    }
-  }
+  align-items: center;
+  justify-content: center;
 }
 
 //下拉组件样式

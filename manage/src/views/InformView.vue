@@ -34,7 +34,8 @@
                         操作
                     </th>
                 </tr>
-                <tr v-for="(item,index) in 8" :key="index">
+                <tr v-for="(item,index) in 8"
+                    :key="index">
                     <td>
                         12
                     </td>
@@ -51,9 +52,9 @@
                     <td>
                         <div>
                             <el-switch
-                                v-model="value"
-                                class="ml-2"
-                                style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+                                    v-model="value"
+                                    class="ml-2"
+                                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
                             />
                             <span>发布</span>
                         </div>
@@ -100,9 +101,17 @@ const open = () => {
 // 表单展示
 const value = ref(true)
 
-onMounted(()=>{
-    // console.log(getCurrentInstance().proxy.$axios)
+// 获取通知分页
+import {
+    notice
+} from "@/axios/api"
+
+onMounted(() => {
+    notice().then(res => {
+        console.log(res)
+    })
 })
+
 </script>
 
 <style
@@ -194,19 +203,22 @@ onMounted(()=>{
           color: #a89d99;
           font-size: 15px;
         }
-          td{
-              font-size: 14px;
-              color: #787a7d;
-              padding-left: 15px;
-              div{
-                  height: 100%;
-                  display: flex;
-                  align-items: center;
-                  .ml-2{
-                      margin-right: 5px;
-                  }
-              }
+
+        td {
+          font-size: 14px;
+          color: #787a7d;
+          padding-left: 15px;
+
+          div {
+            height: 100%;
+            display: flex;
+            align-items: center;
+
+            .ml-2 {
+              margin-right: 5px;
+            }
           }
+        }
       }
     }
   }
