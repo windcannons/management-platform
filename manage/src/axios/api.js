@@ -4,10 +4,46 @@
 import requests from './axios.js';
 
 // 通知管理 start
-let getType = (params={})=>{
-  return requests.get('/type',params)
+let notice = (params={})=>{
+  return requests.get('/notice/page',params)
 }
+
 // 通知管理 end
+// 登录start
+let login = (params={})=>{
+  return requests.post('/login',params)
+}
+
+// 课程管理
+// 登录start
+let course = (currentPage=1,size=10)=>{
+  return requests.get(`/course/page?currentPage=${currentPage}&size=${size}`)
+}
+// 添加课程
+let add = (params={})=>{
+  return requests.post('/course/add',params)
+}
+// 作业详情
+let courseTaskPage  = (currentPage=1,size=10)=>{
+  return requests.get(`/course/courseTaskPage?currentPage=${currentPage}&size=${size}`)
+}
+//
+// 删除
+let deletes = (params={})=>{
+  return requests.post('/course/delete',params)
+}
+// 批量删除
+let deleteids = (params={})=>{
+  return requests.post('/course/delete-ids',params)
+}
+// 手动报名
+let manualenroll = (params={})=>{
+  return requests.post('/course/manual-enroll',params)
+}
 
 
-export {getType}
+
+// 登录end
+
+export {notice,login,course,add,deletes,manualenroll,courseTaskPage,deleteids}
+
